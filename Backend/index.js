@@ -1,16 +1,39 @@
-const express = require('express');
-// initializing express app
-const app = express();
-const userRouter = require('./routers/userRouter');
+const express = require("express")
 
-// for reading JSON data
-app.use(express.json());
-const port = 5000;
+// insitializing express app
+const app = express()
 
-// to divert user request to userRouter
-app.use( '/user', userRouter );
+const userrouter = require("./routers/UserRouter")
+const componentrouter = require("./routers/ComponentRouter")
+const utilrouter = require("./routers/util")
 
-// starting the server
-app.listen(port, () => {
-    console.log('server started');
+const cors = require("cors")
+
+// middleware
+// to parse the json object to javascript object
+app.use(express.json())
+
+// for allowing frontend to access backend
+app.use(cors({ origin: ["http://localhost:3000"] }))
+
+app.use("/user", userrouter)
+app.use("/components", componentrouter)
+app.use("/util", utilrouter)
+app.use(express.static('./static/uploads'))
+
+// server run on the port 5000
+const port = 5000
+
+// provide the response to localhost:5000 with app.get()
+app.get("/", (req, res) => {
+  res.send("Response from Express!")
 })
+// provide the response to localhost:5000/home with app.get()
+app.get("/home", (req, res) => {
+  res.send("Response from Express home!")
+})
+
+
+
+// listen is used to start the server
+app.listen(port, () => console.log("server started at port 5000"))

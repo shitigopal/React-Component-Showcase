@@ -3,6 +3,27 @@ const router = express.Router();
 
 const Model = require('../models/userModel');
 
+router.post('/authenticate' , (req,res) => {
+    const formdata = req.body;
+    Model.findOne({email: formdata.email, password: formdata.password})
+    .then((result) => {
+        console.log(result);
+        if(result){
+            console.log('login success');
+            res.json(result);
+        }
+        else{
+            console.log('login failed');
+            res.status(400),json({messsage: 'login failed'});
+        }
+    })
+
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+    });
+
 router.post('/add', (req, res) => {
 
     // console.log(req.body);

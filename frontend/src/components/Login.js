@@ -1,141 +1,180 @@
 import React from "react";
-
+import { Formik } from "formik";
+import Swal from "sweetalert2";
+import * as Yup from "yup";
+import { useNavigate, Link } from "react-router-dom";
+import { Button, Card } from "@mui/material";
+// import "./Login.css";
+import { TextField, Paper } from "@mui/material";
 const Login = () => {
+  const navigate = useNavigate();
+
+  const userSubmit = async (formdata) => {
+    console.log(formdata);
+
+    // when we use a fetch
+    // 1.Address
+    // 2.request method
+    //3.data
+    // 4.data format
+
+    const response = await fetch("http://localhost:5000/user/authenticate", {
+      method: "POST",
+      // converting javascript object to JSON with stringify
+      body: JSON.stringify(formdata),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 200) {
+      console.log("success");
+      Swal.fire({
+        icon: "success",
+        title: "well done👍",
+        text: "You have done a wonderfull job!!",
+      });
+      const data = await response.json();
+      sessionStorage.setItem("user", JSON.stringify(data));
+      navigate("/addcode");
+    } else {
+      console.log("Login Error");
+      Swal.fire({
+        icon: "error",
+        title: "Try Again",
+        text: "Check email and password",
+      });
+    }
+  };
+  const SignupSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    email: Yup.string().email("Invalid email").required("Required"),
+  });
   return (
-    <>
-      <section className="text-center text-lg-start">
-       
-        <div className="container py-4">
-          <div className="row g-0 align-items-center">
-            <div className="col-lg-6 mb-5 mb-lg-0">
-              <div
-                className="card cascading-right"
-                style={{
-                  background: "hsla(0, 0%, 100%, 0.55)",
-                  backdropFilter: "blur(30px)",
-                }}
-              >
-                <div className="card-body p-5 shadow-5 text-center">
-                  <h2 className="fw-bold mb-5">Sign up now</h2>
-                  <form>
-                    {/* 2 column grid layout with text inputs for the first and last names */}
-                    <div className="row">
-                      <div className="col-md-6 mb-4">
-                        <div className="form-outline">
-                          <input
-                            type="text"
-                            id="form3Example1"
-                            className="form-control"
-                          />
-                          <label className="form-label" htmlFor="form3Example1">
-                            First name
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-md-6 mb-4">
-                        <div className="form-outline">
-                          <input
-                            type="text"
-                            id="form3Example2"
-                            className="form-control"
-                          />
-                          <label className="form-label" htmlFor="form3Example2">
-                            Last name
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Email input */}
-                    <div className="form-outline mb-4">
-                      <input
-                        type="email"
-                        id="form3Example3"
-                        className="form-control"
-                      />
-                      <label className="form-label" htmlFor="form3Example3">
-                        Email address
-                      </label>
-                    </div>
-                    {/* Password input */}
-                    <div className="form-outline mb-4">
-                      <input
-                        type="password"
-                        id="form3Example4"
-                        className="form-control"
-                      />
-                      <label className="form-label" htmlFor="form3Example4">
-                        Password
-                      </label>
-                    </div>
-                    {/* Checkbox */}
-                    <div className="form-check d-flex justify-content-center mb-4">
-                      <input
-                        className="form-check-input me-2"
-                        type="checkbox"
-                        defaultValue=""
-                        id="form2Example33"
-                        defaultChecked=""
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="form2Example33"
-                      >
-                        Subscribe to our newsletter
-                      </label>
-                    </div>
-                    {/* Submit button */}
-                    <button
-                      type="submit"
-                      className="btn btn-primary btn-block mb-4"
-                    >
-                      Sign up
-                    </button>
-                    {/* Register buttons */}
-                    <div className="text-center">
-                      <p>or sign up with:</p>
-                      <button
-                        type="button"
-                        className="btn btn-link btn-floating mx-1"
-                      >
-                        <i className="fab fa-facebook-f" />
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-link btn-floating mx-1"
-                      >
-                        <i className="fab fa-google" />
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-link btn-floating mx-1"
-                      >
-                        <i className="fab fa-twitter" />
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-link btn-floating mx-1"
-                      >
-                        <i className="fab fa-github" />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 mb-5 mb-lg-0">
-              <img
-                src="https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg"
-                className="w-100 rounded-4 shadow-4"
-                alt=""
-              />
-            </div>
+      <div className="container1">
+      <div className="col-md-4 mx-auto">
+        <div className="cards mt-5">
+          <div className="card-body1">
+            <Formik
+              initialValues={{
+                email: "",
+                password: "",
+              }}
+              onSubmit={userSubmit}
+            >
+              {({ values, handleChange, handleSubmit, errors }) => (
+                //  <form  className='logintextfield' onSubmit={handleSubmit}>
+                //  <TextField  value={values.email} onChange={handleChange} id="email" sx={{mt:3}} fullWidth label="Email" helperText={errors.email} error={errors.email?true:false} />
+                //  <TextField  value={values.password} onChange={handleChange} id="password" sx={{mt:3}} fullWidth label="Password" type="password" helperText={errors.password} error={errors.password?true:false}/>
+                //  <button type='submit' className='btn btn-primary'>Log In</button>
+                //  </form>
+                // <div className="row">
+                //   <div className="col-md-6">
+                //   </div>
+                //   <div className="col-md-6">
+                // <Card className='logincard'>
+               
+                <form
+                  className="Loginform"
+                  onSubmit={handleSubmit}
+                  validationSchema={SignupSchema}
+                >
+                  <h1 className="text-center" style={{ color: "black" }}>
+                    Login
+                  </h1>
+                  <br />
+                  <div class="form-outline mb-4">
+                    {/* <input type="email"  class="form-control"  value={values.email} onChange={handleChange} id="email" helperText={errors.email} error={errors.email?true:false}/>
+    <label class="form-label" for="form2Example1">Email address</label> */}
+                    <TextField
+                      class="form-control"
+                      value={values.email}
+                      onChange={handleChange}
+                      id="email"
+                      // sx={{ mt: 1 }}
+                      fullWidth
+                      label="Email"
+                      helperText={errors.email}
+                      error={errors.email ? true : false}
+                    />
+                  </div>
+
+                  <div class="form-outline mb-4 roundborder">
+                    {/* <input type="password" value={values.password} onChange={handleChange} id="password" class="form-control" helperText={errors.password} error={errors.password?true:false} />
+    <label class="form-label" for="form2Example2">Password</label> */}
+                    <TextField 
+                      className="form-control"
+                      value={values.password}
+                      onChange={handleChange}
+                      id="password"
+                      // sx={{ mt: 1 }}
+                      fullWidth
+                      label="Password"
+                      type="password"
+                      helperText={errors.password}
+                      error={errors.password ? true : false}
+                    />
+                  </div>
+
+                  {/* <div class="row mb-4">
+    <div class="col d-flex justify-content-center">
+       */}
+                  {/* <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="form2Example34" checked />
+        <label class="form-check-label" for="form2Example34"> Remember me </label>
+      </div> */}
+                  {/* </div> */}
+
+                  {/* <div class="col"> */}
+
+                  <Link to="/forgetpassword">Forgot password?</Link>
+                  <br />
+                  <br />
+
+                  {/* </div> */}
+                  {/* </div> */}
+
+                  <Button type="submit" class="btn btn-primary btn-block mb-4">
+                    Sign in
+                  </Button>
+
+                  <div class="text-center">
+                    <p>
+                      Not a member? <Link to="/Signup">Register</Link>
+                    </p>
+                    {/* <p>or sign up with:</p>
+    <button type="button" class="btn btn-primary btn-floating mx-1">
+      <i class="fab fa-facebook-f"></i>
+    </button>
+
+    <button type="button" class="btn btn-primary btn-floating mx-1">
+      <i class="fab fa-google"></i>
+    </button>
+
+    <button type="button" class="btn btn-primary btn-floating mx-1">
+      <i class="fab fa-twitter"></i>
+    </button>
+
+    <button type="button" class="btn btn-primary btn-floating mx-1">
+      <i class="fab fa-github"></i>
+    </button> */}
+                  </div>
+                </form>
+                
+                // </Card>
+                // </div>
+                // </div>
+              )}
+            </Formik>
+            {/* </div> */}
           </div>
         </div>
-        {/* Jumbotron */}
-      </section>
-      {/* Section: Design Block */}
-    </>
+      </div>
+    </div>
+   
   );
 };
-
 export default Login;
