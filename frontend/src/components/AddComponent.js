@@ -64,8 +64,8 @@ const AddComponent = () => {
 
                 <Formik
                   initialValues={{
-                    title: "",
-                    description: "",
+                    title: "Signup Page",
+                    description: "Signup Now",
                     image: "",
                     code: "",
                     createdAt: new Date(),
